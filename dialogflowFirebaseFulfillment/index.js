@@ -27,6 +27,17 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
     function recycleIntent(agent) {
       const { object, material } = agent.parameters;
 
+      if (object == "#1") {
+        return recyclable(agent);
+      } else if (object == "#2") {
+        return nonRecyclable(agent);
+      } else if (object == "#3") {
+        return foodWaste(agent);
+      }
+
+      if (!object && !material)
+        return agent.add("Could you please specify the material?");
+
       if (material == "plastic") {
         agent.add(`Oh, plastic. Does it stretch?`);
         agent.setContext({
@@ -47,6 +58,12 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
           name: "paperContext",
           lifespan: 1,
         });
+      } else if (material == "food") {
+        foodWaste(agent);
+      } else if (material == "wood") {
+        nonRecyclable(agent);
+      } else {
+        failed(agent);
       }
     }
 
@@ -66,6 +83,11 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
     function foodWaste(agent) {
       agent.clearOutgoingContexts();
       agent.add("Throw it in the food bin");
+    }
+
+    function failed(agent) {
+      agent.clearOutgoingContexts();
+      agent.add("Sorry, I can't help you 😢. Try checking on the packaging.");
     }
 
     function plasticNoStretchIntent(agent) {
