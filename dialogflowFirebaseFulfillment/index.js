@@ -12,18 +12,17 @@ const NON_RECYCLABLE = [
   "It's not recyclable :(",
   "Please do not recycle this 💔💔",
   "❌ Please do not recycle this item",
-  "This item is not recyclable",
-  "Don't recycle this!",
-  "Please put this in a non-recyclable bin",
-  "⛔️ 📛 🚫",
+  "This item is not recyclable 🚫",
+  "Don't recycle ⛔️!",
+  "Please put this in a non-recyclable bin"
 ];
 
 const RECYCLABLE = [
-  "It is recyclable ",
+  "Okay, it is recyclable! ",
   "You can recycle it! ✅✅✅",
-  "It can be recycled",
+  "I believe it can be recycled",
   "You can recycle this 🅿️",
-  "Please recycle this",
+  "Please recycle this!",
   "Yup, you can recycle this",
   "Put this in the recycle bin",
 ];
@@ -45,8 +44,8 @@ const GLASS_Q = [
 ];
 
 const PLASTIC_NOSTRETCH = [
-  "Try scrunching it, does it maintain its shape",
-  "When you scrunch it, does it maintain its shape",
+  "Try scrunching it, does it maintain its shape?",
+  "When you scrunch it, does it maintain its shape?",
   "What happens when you scrunch it? Does its shape remain the shape?",
   "Does its shape remain the same when you scrunch it?",
 ];
