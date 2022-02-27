@@ -8,6 +8,69 @@ const { Card, Suggestion } = require("dialogflow-fulfillment");
 
 process.env.DEBUG = "dialogflow:debug"; // enables lib debugging statements
 
+const NON_RECYCLABLE = [
+  "It's not recyclable :(",
+  "Please do not recycle this 💔💔",
+  "❌ Please do not recycle this item",
+  "This item is not recyclable",
+  "Don't recycle this!",
+  "Please put this in a non-recyclable bin",
+  "⛔️ 📛 🚫",
+];
+
+const RECYCLABLE = [
+  "It is recyclable ",
+  "You can recycle it! ✅✅✅",
+  "It can be recycled",
+  "You can recycle this 🅿️",
+  "Please recycle this",
+  "Yup, you can recycle this",
+  "Put this in the recycle bin",
+];
+
+const MATERIAL_FOLLOWUP = [
+  "Could you specify the material?",
+  "What is it made of?",
+  "What material is it made of?",
+  "Please specify the material",
+  "Could you please specify the material?",
+];
+
+const GLASS_Q = [
+  "Oh nice. Is it some fancy shaped perhaps tempered or lead glass?",
+  "Is the glass tempered or lead?",
+  "Ok, is the glass tempered or leaded?",
+  "Could you be more specific about the type, is it fancy or tempered or lead?",
+  "Is it a fancy or lead or a tempered glass",
+];
+
+const PLASTIC_NOSTRETCH = [
+  "Try scrunching it, does it maintain its shape",
+  "When you scrunch it, does it maintain its shape",
+  "What happens when you scrunch it? Does its shape remain the shape?",
+  "Does its shape remain the same when you scrunch it?",
+];
+
+const PLASTIC_STRETCH = [
+  "Oh it's plastic, can you stretch it?",
+  "Can you stretch it?",
+  "When you stretch it, does its shape change?",
+  "Can you stretch your item?",
+];
+
+const FOOD = [
+  "Throw it in the food bin!",
+  "Please throw in a nearby food bin",
+  "You should throw this in a food bin",
+  "Please find a food bin and throw this in it",
+];
+
+const FAILED = [
+  "Sorry, I can't help you 😢. Try checking on the packaging.",
+  "I'm so sorry I can't help you with this 😭, refer to the Oxford recycling web page.",
+  "Sorry, I don't know how to answer this, please check the packaging on the item or the Oxford recycling page.",
+  "I don't know how to answer this, try checking the packaging.",
+];
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -36,18 +99,16 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
       }
 
       if (!object && !material)
-        return agent.add("Could you please specify the material?");
+        return agent.add(randomElement(MATERIAL_FOLLOWUP));
 
       if (material == "plastic") {
-        agent.add(`Oh, plastic. Does it stretch?`);
+        agent.add(randomElement(PLASTIC_STRETCH));
         agent.setContext({
           name: "plasticContext",
           lifespan: 1,
         });
       } else if (material == "glass") {
-        agent.add(
-          `Oh nice. Is it some fancy shaped perhaps tempered or lead glass?`
-        );
+        agent.add(randomElement(GLASS_Q));
         agent.setContext({
           name: "glassContext",
           lifespan: 1,
@@ -69,48 +130,27 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest(
 
     function recyclable(agent) {
       agent.clearOutgoingContexts();
-      agent.add(
-        "You can safely recycle it. Remember to rinse food leftovers if it has any on it."
-      );
+      agent.add(randomElement(RECYCLABLE));
     }
 
     function nonRecyclable(agent) {
-      const NON_RECYCLABLE = ["It's not recyclable 🥺", ":(((((("];
       agent.clearOutgoingContexts();
       agent.add(randomElement(NON_RECYCLABLE));
     }
 
     function foodWaste(agent) {
       agent.clearOutgoingContexts();
-      agent.add("Throw it in the food bin");
+      agent.add(randomElement(FOOD));
     }
 
     function failed(agent) {
       agent.clearOutgoingContexts();
-      agent.add("Sorry, I can't help you 😢. Try checking on the packaging.");
+      agent.add(randomElement(FAILED));
     }
 
     function plasticNoStretchIntent(agent) {
-      agent.add("Does it maintain shape when scrunched?");
+      agent.add(randomElement(PLASTIC_NOSTRETCH));
     }
-
-    // // Uncomment and edit to make your own intent handler
-    // // uncomment `intentMap.set('your intent name here', yourFunctionHandler);`
-    // // below to get this function to be run when a Dialogflow intent is matched
-    // function yourFunctionHandler(agent) {
-    //   agent.add(`This message is from Dialogflow's Cloud Functions for Firebase editor!`);
-    //   agent.add(new Card({
-    //       title: `Title: this is a card title`,
-    //       imageUrl: 'https://developers.google.com/actions/images/badges/XPM_BADGING_GoogleAssistant_VER.png',
-    //       text: `This is the body text of a card.  You can even use line\n  breaks and emoji! 💁`,
-    //       buttonText: 'This is a button',
-    //       buttonUrl: 'https://assistant.google.com/'
-    //     })
-    //   );
-    //   agent.add(new Suggestion(`Quick Reply`));
-    //   agent.add(new Suggestion(`Suggestion`));
-    //   agent.setContext({ name: 'weather', lifespan: 2, parameters: { city: 'Rome' }});
-    // }
 
     let intentMap = new Map();
     intentMap.set("recycleIntent", recycleIntent);
